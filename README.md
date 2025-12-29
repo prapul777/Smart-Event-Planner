@@ -255,7 +255,4 @@ smart-event-planner/
    - Delete `node_modules` and reinstall
    - Check Node.js version (v16+)
 
-## 📄 License
-
-This project is created for educational purposes (college final-year project).
 

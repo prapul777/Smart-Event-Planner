@@ -1,0 +1,22 @@
+<div class="unauthorized-container">
+  <mat-card class="unauthorized-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon color="warn" style="font-size: 64px; width: 64px; height: 64px;">block</mat-icon>
+      </mat-card-title>
+      <mat-card-subtitle>Access Denied</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <h2>You are not authorized to access this page.</h2>
+      <p>Please switch to the appropriate role to access this feature.</p>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="goToEvents()">
+        Go to Events
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+

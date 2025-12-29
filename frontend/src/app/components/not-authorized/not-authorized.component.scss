@@ -1,0 +1,23 @@
+.unauthorized-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 20px;
+}
+
+.unauthorized-card {
+  max-width: 500px;
+  text-align: center;
+}
+
+.unauthorized-card h2 {
+  margin: 20px 0;
+  color: #333;
+}
+
+.unauthorized-card p {
+  color: #666;
+  margin-bottom: 20px;
+}
+

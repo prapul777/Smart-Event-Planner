@@ -1,0 +1,68 @@
+<div class="confirmation-container">
+  <div *ngIf="loading" class="loading">
+    <p>Loading booking confirmation...</p>
+  </div>
+
+  <mat-card *ngIf="!loading && booking" class="confirmation-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon color="primary" style="font-size: 48px; width: 48px; height: 48px;">check_circle</mat-icon>
+      </mat-card-title>
+      <mat-card-subtitle>Booking Confirmed!</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="confirmation-details">
+        <h2>Booking Details</h2>
+        
+        <div class="detail-row">
+          <strong>Booking ID:</strong> {{ booking.id }}
+        </div>
+        
+        <div class="detail-row">
+          <strong>Event:</strong> {{ booking.event_name }}
+        </div>
+        
+        <div class="detail-row">
+          <strong>Venue:</strong> {{ booking.venue }}
+        </div>
+        
+        <div class="detail-row">
+          <strong>Date & Time:</strong> {{ booking.date_time | date:'full' }}
+        </div>
+        
+        <div class="detail-row">
+          <strong>Attendee ID:</strong> {{ booking.attendee_id }}
+        </div>
+        
+        <div class="detail-row">
+          <strong>Tickets Booked:</strong> {{ booking.tickets_booked }}
+        </div>
+        
+        <div class="detail-row">
+          <strong>Total Price:</strong> ₹{{ booking.total_price }}
+        </div>
+        
+        <div class="detail-row">
+          <strong>Booking Time:</strong> {{ booking.booking_time | date:'medium' }}
+        </div>
+      </div>
+
+      <div class="qr-section" *ngIf="booking.id">
+        <p><strong>Booking Reference:</strong> #{{ booking.id }}</p>
+        <p class="note">Please save this booking ID for your records.</p>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="goToEvents()">
+        Browse More Events
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <div *ngIf="!loading && !booking" class="no-booking">
+    <p>Booking not found.</p>
+  </div>
+</div>
+

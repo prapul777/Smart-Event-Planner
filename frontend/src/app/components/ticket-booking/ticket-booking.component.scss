@@ -1,0 +1,26 @@
+.booking-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.booking-card {
+  margin-top: 20px;
+}
+
+mat-form-field {
+  margin-bottom: 15px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+

@@ -1,0 +1,49 @@
+<div class="event-details-container">
+  <button mat-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon> Back to Events
+  </button>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading event details...</p>
+  </div>
+
+  <mat-card *ngIf="!loading && event" class="event-details-card">
+    <mat-card-header>
+      <mat-card-title>{{ event.name }}</mat-card-title>
+      <mat-card-subtitle>
+        <mat-chip>{{ event.category }}</mat-chip>
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="details-section">
+        <h3>Event Information</h3>
+        <p><strong>Description:</strong> {{ event.description || 'No description available' }}</p>
+        <p><strong>Venue:</strong> {{ event.venue }}</p>
+        <p><strong>Date & Time:</strong> {{ event.date_time | date:'full' }}</p>
+        <p><strong>Total Capacity:</strong> {{ event.capacity }}</p>
+        <p><strong>Tickets Sold:</strong> {{ event.tickets_sold || 0 }}</p>
+        <p><strong>Available Seats:</strong> 
+          <span [class.low-seats]="(event.available_seats || event.capacity) < 10">
+            {{ event.available_seats || event.capacity }}
+          </span>
+        </p>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="bookTickets()"
+        [disabled]="(event.available_seats || event.capacity) <= 0">
+        Book Tickets
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <div *ngIf="!loading && !event" class="no-event">
+    <p>Event not found.</p>
+  </div>
+</div>
+

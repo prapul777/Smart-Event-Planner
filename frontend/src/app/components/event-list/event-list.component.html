@@ -1,0 +1,55 @@
+<div class="event-list-container">
+  <h1>Upcoming Events</h1>
+
+  <!-- Filter Section -->
+  <mat-form-field appearance="outline" style="width: 300px; margin-bottom: 20px;">
+    <mat-label>Filter by Category</mat-label>
+    <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onCategoryChange()">
+      <mat-option value="">All Categories</mat-option>
+      <mat-option *ngFor="let category of categories" [value]="category">
+        {{ category }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">
+    <p>Loading events...</p>
+  </div>
+
+  <!-- Events Grid -->
+  <div *ngIf="!loading" class="events-grid">
+    <mat-card *ngFor="let event of filteredEvents" class="event-card">
+      <mat-card-header>
+        <mat-card-title>{{ event.name }}</mat-card-title>
+        <mat-card-subtitle>{{ event.category }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <p><strong>Venue:</strong> {{ event.venue }}</p>
+        <p><strong>Date & Time:</strong> {{ event.date_time | date:'medium' }}</p>
+        <p><strong>Available Seats:</strong> {{ event.available_seats || event.capacity }}</p>
+        <p *ngIf="event.description">{{ event.description }}</p>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="viewEventDetails(event.id)">
+          View Details
+        </button>
+        <button 
+          mat-raised-button 
+          color="accent" 
+          (click)="bookTickets(event.id)"
+          [disabled]="(event.available_seats || event.capacity) <= 0">
+          Book Tickets
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <!-- No Events Message -->
+  <div *ngIf="!loading && filteredEvents.length === 0" class="no-events">
+    <p>No events found.</p>
+  </div>
+</div>
+

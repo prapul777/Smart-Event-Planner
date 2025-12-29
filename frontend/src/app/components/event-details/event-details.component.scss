@@ -1,0 +1,34 @@
+.event-details-container {
+  padding: 20px;
+}
+
+.event-details-card {
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.details-section {
+  margin-top: 20px;
+}
+
+.details-section h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.details-section p {
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.low-seats {
+  color: #f44336;
+  font-weight: bold;
+}
+
+.loading, .no-event {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+

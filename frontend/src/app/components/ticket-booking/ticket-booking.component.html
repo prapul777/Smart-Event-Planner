@@ -1,0 +1,60 @@
+<div class="booking-container">
+  <button mat-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon> Back to Event
+  </button>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading...</p>
+  </div>
+
+  <mat-card *ngIf="!loading && event" class="booking-card">
+    <mat-card-header>
+      <mat-card-title>Book Tickets</mat-card-title>
+      <mat-card-subtitle>{{ event.name }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Attendee ID / Name</mat-label>
+          <input matInput formControlName="attendee_id" required>
+          <mat-error *ngIf="bookingForm.get('attendee_id')?.hasError('required')">
+            Attendee ID is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Number of Tickets</mat-label>
+          <input 
+            matInput 
+            type="number" 
+            formControlName="tickets_booked" 
+            min="1" 
+            [max]="getMaxTickets()"
+            required>
+          <mat-hint>Available: {{ event.available_seats || event.capacity }} seats</mat-hint>
+          <mat-error *ngIf="bookingForm.get('tickets_booked')?.hasError('required')">
+            Number of tickets is required
+          </mat-error>
+          <mat-error *ngIf="bookingForm.get('tickets_booked')?.hasError('max')">
+            Cannot book more than available seats
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-label>Total Price</mat-label>
+          <input matInput formControlName="total_price" readonly>
+          <span matPrefix>₹&nbsp;</span>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!bookingForm.valid">
+            Confirm Booking
+          </button>
+          <button mat-button type="button" (click)="goBack()">Cancel</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+

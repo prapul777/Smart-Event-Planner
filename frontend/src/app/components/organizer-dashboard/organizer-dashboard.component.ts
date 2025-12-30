@@ -15,6 +15,7 @@ export class OrganizerDashboardComponent implements OnInit {
   bookings: Booking[] = [];
   bookingSummary: any = null;
   eventForm: FormGroup;
+  selectedFile: File | null = null;
   isEditing: boolean = false;
   editingEventId: number | null = null;
   loading: boolean = false;
@@ -58,24 +59,47 @@ export class OrganizerDashboardComponent implements OnInit {
   onCreateEvent(): void {
     this.isEditing = false;
     this.editingEventId = null;
+    this.selectedFile = null;
     this.eventForm.reset();
   }
 
   onSubmitEvent(): void {
     if (this.eventForm.valid) {
       const organizerId = localStorage.getItem('organizerId') || 'organizer_1';
-      const eventData = {
-        ...this.eventForm.value,
-        organizer_id: organizerId
-      };
+      // Build payload — use FormData if file selected
+      let payload: any;
+      if (this.selectedFile) {
+        payload = new FormData();
+        const formVal = this.eventForm.value;
+        // Only add organizer_id for create, not for update
+        if (!this.isEditing) {
+          payload.append('organizer_id', organizerId);
+        }
+        payload.append('name', formVal.name);
+        payload.append('description', formVal.description || '');
+        payload.append('venue', formVal.venue);
+        payload.append('date_time', formVal.date_time);
+        payload.append('category', formVal.category);
+        payload.append('capacity', String(formVal.capacity));
+        payload.append('image', this.selectedFile);
+      } else {
+        payload = {
+          ...this.eventForm.value,
+          organizer_id: organizerId
+        };
+      }
 
       if (this.isEditing && this.editingEventId) {
-        // Update event
-        this.eventService.updateEvent(this.editingEventId, eventData).subscribe({
+        // Update event (remove organizer_id from payload if it's JSON)
+        if (!this.selectedFile) {
+          delete payload.organizer_id;
+        }
+        this.eventService.updateEvent(this.editingEventId, payload).subscribe({
           next: () => {
             this.snackBar.open('Event updated successfully', 'Close', { duration: 3000 });
             this.loadMyEvents();
             this.eventForm.reset();
+            this.selectedFile = null;
             this.isEditing = false;
             this.editingEventId = null;
           },
@@ -86,11 +110,12 @@ export class OrganizerDashboardComponent implements OnInit {
         });
       } else {
         // Create event
-        this.eventService.createEvent(eventData).subscribe({
+        this.eventService.createEvent(payload).subscribe({
           next: () => {
             this.snackBar.open('Event created successfully', 'Close', { duration: 3000 });
             this.loadMyEvents();
             this.eventForm.reset();
+            this.selectedFile = null;
           },
           error: (error) => {
             const errorMsg = error.error?.error || 'Failed to create event';
@@ -101,9 +126,19 @@ export class OrganizerDashboardComponent implements OnInit {
     }
   }
 
+  onFileSelected(event: any): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+    } else {
+      this.selectedFile = null;
+    }
+  }
+
   onEditEvent(event: Event): void {
     this.isEditing = true;
     this.editingEventId = event.id;
+    this.selectedFile = null;  // Clear file selection when editing
     this.eventForm.patchValue({
       name: event.name,
       description: event.description,

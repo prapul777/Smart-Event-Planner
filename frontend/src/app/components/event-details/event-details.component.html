@@ -17,6 +17,9 @@
 
     <mat-card-content>
       <div class="details-section">
+        <div *ngIf="event.image_path" class="event-image">
+          <img [src]="getImageUrl(event.image_path)" alt="event image" style="max-width:100%;height:auto;margin-bottom:8px"/>
+        </div>
         <h3>Event Information</h3>
         <p><strong>Description:</strong> {{ event.description || 'No description available' }}</p>
         <p><strong>Venue:</strong> {{ event.venue }}</p>
@@ -33,12 +36,16 @@
 
     <mat-card-actions>
       <button 
+        *ngIf="isAttendee()"
         mat-raised-button 
         color="primary" 
         (click)="bookTickets()"
         [disabled]="(event.available_seats || event.capacity) <= 0">
         Book Tickets
       </button>
+      <p *ngIf="!isAttendee()" class="organizer-notice">
+        <mat-icon>info</mat-icon> Only attendees can book tickets. Organizers manage events from the dashboard.
+      </p>
     </mat-card-actions>
   </mat-card>
 

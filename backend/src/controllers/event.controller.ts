@@ -1,10 +1,14 @@
 import { Request, Response } from 'express';
 import pool from '../config/db';
+import path from 'path';
 
 // Create Event
 export const createEvent = async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizer_id, name, description, venue, date_time, category, capacity } = req.body;
+    // if file uploaded (multer), available as req.file
+    const file = (req as any).file;
+    const imagePath = file ? path.join('uploads', file.filename) : null;
 
     // Validation
     if (!organizer_id || !name || !venue || !date_time || !category || !capacity) {
@@ -18,8 +22,8 @@ export const createEvent = async (req: Request, res: Response): Promise<void> =>
     }
 
     const [result] = await pool.execute(
-      'INSERT INTO events (organizer_id, name, description, venue, date_time, category, capacity) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [organizer_id, name, description || null, venue, date_time, category, capacity]
+      'INSERT INTO events (organizer_id, name, description, venue, date_time, category, capacity, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [organizer_id, name, description || null, venue, date_time, category, capacity, imagePath]
     );
 
     const insertResult = result as any;
@@ -38,6 +42,8 @@ export const updateEvent = async (req: Request, res: Response): Promise<void> =>
   try {
     const { id } = req.params;
     const { name, description, venue, date_time, category, capacity } = req.body;
+    const file = (req as any).file;
+    const imagePath = file ? path.join('uploads', file.filename) : undefined;
 
     // Check if event exists
     const [events] = await pool.execute('SELECT * FROM events WHERE id = ?', [id]);
@@ -81,6 +87,10 @@ export const updateEvent = async (req: Request, res: Response): Promise<void> =>
     if (capacity !== undefined) {
       updates.push('capacity = ?');
       values.push(capacity);
+    }
+    if (imagePath !== undefined) {
+      updates.push('image_path = ?');
+      values.push(imagePath);
     }
 
     if (updates.length === 0) {
@@ -128,7 +138,7 @@ export const cancelEvent = async (req: Request, res: Response): Promise<void> =>
 // List Events (with filters)
 export const listEvents = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { category, organizer_id, upcoming } = req.query;
+    const { category, organizer_id, upcoming, venue, startDate, endDate } = req.query;
 
     let query = `
       SELECT 
@@ -142,14 +152,29 @@ export const listEvents = async (req: Request, res: Response): Promise<void> => 
     const params: any[] = [];
 
     // Apply filters
-    if (category) {
+    if (category && category !== '') {
       query += ' AND e.category = ?';
       params.push(category);
     }
 
-    if (organizer_id) {
+    if (organizer_id && organizer_id !== '') {
       query += ' AND e.organizer_id = ?';
       params.push(organizer_id);
+    }
+
+    if (venue && venue !== '') {
+      query += ' AND e.venue LIKE ?';
+      params.push(`%${venue}%`);
+    }
+
+    if (startDate && startDate !== '') {
+      query += ' AND DATE(e.date_time) >= ?';
+      params.push(startDate);
+    }
+
+    if (endDate && endDate !== '') {
+      query += ' AND DATE(e.date_time) <= ?';
+      params.push(endDate);
     }
 
     if (upcoming === 'true') {

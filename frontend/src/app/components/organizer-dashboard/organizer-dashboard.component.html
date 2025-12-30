@@ -50,6 +50,11 @@
           </mat-form-field>
         </div>
 
+        <div class="form-row">
+          <label>Event Image (optional)</label>
+          <input type="file" (change)="onFileSelected($event)" accept="image/*">
+        </div>
+
         <div class="form-actions">
           <button mat-raised-button color="primary" type="submit" [disabled]="!eventForm.valid">
             {{ isEditing ? 'Update Event' : 'Create Event' }}

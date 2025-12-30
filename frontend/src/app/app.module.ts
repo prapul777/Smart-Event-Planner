@@ -19,6 +19,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { AppComponent } from './app.component';
 import { EventListComponent } from './components/event-list/event-list.component';
@@ -27,10 +28,14 @@ import { TicketBookingComponent } from './components/ticket-booking/ticket-booki
 import { BookingConfirmationComponent } from './components/booking-confirmation/booking-confirmation.component';
 import { OrganizerDashboardComponent } from './components/organizer-dashboard/organizer-dashboard.component';
 import { NotAuthorizedComponent } from './components/not-authorized/not-authorized.component';
+import { LoginComponent } from './components/login/login.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './services/token.interceptor';
 
 @NgModule({
   declarations: [
     AppComponent,
+    LoginComponent,
     EventListComponent,
     EventDetailsComponent,
     TicketBookingComponent,
@@ -57,9 +62,12 @@ import { NotAuthorizedComponent } from './components/not-authorized/not-authoriz
     MatTableModule,
     MatChipsModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatExpansionModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

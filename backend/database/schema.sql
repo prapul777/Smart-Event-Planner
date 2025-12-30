@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS events (
     date_time DATETIME NOT NULL,
     category VARCHAR(100) NOT NULL,
     capacity INT NOT NULL CHECK (capacity > 0),
+    image_path VARCHAR(512) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_organizer (organizer_id),
     INDEX idx_date_time (date_time),
@@ -30,5 +31,18 @@ CREATE TABLE IF NOT EXISTS bookings (
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
     INDEX idx_event (event_id),
     INDEX idx_attendee (attendee_id)
+);
+
+
+-- Users table
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('ORGANIZER','ATTENDEE','ADMIN') NOT NULL DEFAULT 'ATTENDEE',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_role (role)
 );
 

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AuthService } from './services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -8,23 +10,26 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'Smart Event Planner';
 
-  // Get current user role from localStorage
+  constructor(private auth: AuthService, private router: Router) {}
+
+  isLoggedIn(): boolean {
+    return !!this.auth.getToken();
+  }
+
   getCurrentRole(): string {
-    return localStorage.getItem('userRole') || 'attendee';
+    const jwtRole = this.auth.getRole();
+    if (jwtRole) return jwtRole.toUpperCase();
+    return localStorage.getItem('userRole') || 'ATTENDEE';
   }
 
   isOrganizer(): boolean {
-    return this.getCurrentRole() === 'organizer';
+    const role = this.auth.getRole() || localStorage.getItem('userRole');
+    return role === 'organizer' || role === 'ORGANIZER';
   }
 
-  isAttendee(): boolean {
-    return this.getCurrentRole() === 'attendee';
-  }
-
-  // Switch role (for demo purposes)
-  switchRole(role: string): void {
-    localStorage.setItem('userRole', role);
-    window.location.reload();
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }
 

@@ -1,16 +1,63 @@
 <div class="event-list-container">
-  <h1>Upcoming Events</h1>
+  <div class="header-section">
+    <h1>Upcoming Events</h1>
+    <button mat-raised-button color="primary" (click)="toggleFilters()" class="toggle-btn">
+      <mat-icon>{{ showFilters ? 'expand_less' : 'expand_more' }}</mat-icon>
+      {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+    </button>
+  </div>
 
-  <!-- Filter Section -->
-  <mat-form-field appearance="outline" style="width: 300px; margin-bottom: 20px;">
-    <mat-label>Filter by Category</mat-label>
-    <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onCategoryChange()">
-      <mat-option value="">All Categories</mat-option>
-      <mat-option *ngFor="let category of categories" [value]="category">
-        {{ category }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <!-- Filter Panel -->
+  <mat-expansion-panel *ngIf="showFilters" class="filter-panel">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>filter_list</mat-icon>
+        Filter Events
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="filter-content">
+      <div class="filter-row">
+        <!-- Category Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onFilterChange()">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category">
+              {{ category }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Venue Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>Venue</mat-label>
+          <input matInput [(ngModel)]="selectedVenue" (keyup)="onFilterChange()" placeholder="Search by venue">
+        </mat-form-field>
+      </div>
+
+      <div class="filter-row">
+        <!-- Start Date Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>From Date</mat-label>
+          <input matInput type="date" [(ngModel)]="startDate" (change)="onFilterChange()">
+        </mat-form-field>
+
+        <!-- End Date Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>To Date</mat-label>
+          <input matInput type="date" [(ngModel)]="endDate" (change)="onFilterChange()">
+        </mat-form-field>
+      </div>
+
+      <div class="filter-actions">
+        <button mat-raised-button color="warn" (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Clear Filters
+        </button>
+      </div>
+    </div>
+  </mat-expansion-panel>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="loading">
@@ -26,6 +73,7 @@
       </mat-card-header>
       
       <mat-card-content>
+        <p *ngIf="event.image_path"><img [src]="getImageUrl(event.image_path)" alt="event image" style="max-width:100%;height:auto;margin-bottom:8px"/></p>
         <p><strong>Venue:</strong> {{ event.venue }}</p>
         <p><strong>Date & Time:</strong> {{ event.date_time | date:'medium' }}</p>
         <p><strong>Available Seats:</strong> {{ event.available_seats || event.capacity }}</p>
@@ -49,7 +97,7 @@
 
   <!-- No Events Message -->
   <div *ngIf="!loading && filteredEvents.length === 0" class="no-events">
-    <p>No events found.</p>
+    <p>No events found matching your filters.</p>
   </div>
 </div>
 

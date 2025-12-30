@@ -2,19 +2,19 @@
   <span>Smart Event Planner</span>
   <span class="spacer"></span>
   
-  <button mat-button routerLink="/events">Events</button>
-  
-  <button *ngIf="isOrganizer()" mat-button routerLink="/organizer/dashboard">
-    Dashboard
-  </button>
-  
-  <mat-form-field appearance="outline" style="margin-left: 20px;">
-    <mat-label>Role</mat-label>
-    <mat-select [value]="getCurrentRole()" (selectionChange)="switchRole($event.value)">
-      <mat-option value="attendee">Attendee</mat-option>
-      <mat-option value="organizer">Organizer</mat-option>
-    </mat-select>
-  </mat-form-field>
+  <div *ngIf="isLoggedIn()" class="logged-in-section">
+    <button mat-button routerLink="/events">Events</button>
+    
+    <button *ngIf="isOrganizer()" mat-button routerLink="/organizer/dashboard">
+      Dashboard
+    </button>
+
+    <span class="user-info">{{ getCurrentRole() }}</span>
+    
+    <button mat-button (click)="logout()" color="accent">
+      Logout
+    </button>
+  </div>
 </mat-toolbar>
 
 <main class="container">

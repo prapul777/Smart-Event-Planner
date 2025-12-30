@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventService, Event } from '../../services/event.service';
+import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -17,6 +18,7 @@ export class EventDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private eventService: EventService,
+    private auth: AuthService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -46,6 +48,16 @@ export class EventDetailsComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/events']);
+  }
+
+  getImageUrl(path: string | undefined | null): string {
+    if (!path) return '';
+    return `http://localhost:5000/${path}`;
+  }
+
+  isAttendee(): boolean {
+    const role = this.auth.getRole() || localStorage.getItem('userRole');
+    return role === 'attendee' || role === 'ATTENDEE';
   }
 }
 

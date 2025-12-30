@@ -5,7 +5,7 @@ import { AuthService } from '../services/auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AttendeeGuard implements CanActivate {
+export class AttendeeOnlyGuard implements CanActivate {
   constructor(private router: Router, private auth: AuthService) {}
 
   canActivate(): boolean {
@@ -16,15 +16,22 @@ export class AttendeeGuard implements CanActivate {
       return false;
     }
 
-    // Prefer JWT role if available
+    // Check JWT role - ONLY allow ATTENDEE
     const jwtRole = this.auth.getRole();
     if (jwtRole) {
-      if (jwtRole === 'attendee' || jwtRole === 'organizer') return true;
+      if (jwtRole === 'attendee') return true;
+      // Organizers and admins cannot book events
       this.router.navigate(['/not-authorized']);
       return false;
     }
 
-    return true;
+    // Fallback to localStorage-based role
+    const userRole = localStorage.getItem('userRole');
+    if (userRole === 'attendee' || userRole === 'ATTENDEE') {
+      return true;
+    } else {
+      this.router.navigate(['/not-authorized']);
+      return false;
+    }
   }
 }
-

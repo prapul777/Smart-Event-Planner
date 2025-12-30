@@ -13,6 +13,7 @@ export interface Event {
   date_time: string;
   category: string;
   capacity: number;
+  image_path?: string | null;
   tickets_sold?: number;
   available_seats?: number;
   created_at: string;
@@ -30,11 +31,21 @@ export class EventService {
   }
 
   // Get All Events (with optional filters)
-  getEvents(filters?: { category?: string; organizer_id?: string; upcoming?: boolean }): Observable<Event[]> {
+  getEvents(filters?: { 
+    category?: string; 
+    organizer_id?: string; 
+    upcoming?: boolean;
+    venue?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Observable<Event[]> {
     let params = new HttpParams();
     if (filters) {
       if (filters.category) params = params.set('category', filters.category);
       if (filters.organizer_id) params = params.set('organizer_id', filters.organizer_id);
+      if (filters.venue) params = params.set('venue', filters.venue);
+      if (filters.startDate) params = params.set('startDate', filters.startDate);
+      if (filters.endDate) params = params.set('endDate', filters.endDate);
       if (filters.upcoming) params = params.set('upcoming', 'true');
     }
     return this.http.get<Event[]>(`${API_URL}/events`, { params });

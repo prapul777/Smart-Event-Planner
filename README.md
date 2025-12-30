@@ -233,13 +233,6 @@ smart-event-planner/
 - **Organizer routes**: `/organizer/dashboard`
 - Unauthorized access redirects to `/not-authorized`
 
-## 📝 Notes
-
-- No authentication system (roles stored in localStorage)
-- No payment gateway integration
-- QR code generation is optional (booking ID used as reference)
-- Capacity validation ensures tickets don't exceed available seats
-
 ## 🐛 Troubleshooting
 
 1. **MySQL Connection Error**

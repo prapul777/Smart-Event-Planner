@@ -1,4 +1,8 @@
-import express from 'express';
+import express, { Request } from 'express';
+import path from 'path';
+import fs from 'fs';
+import multer from 'multer';
+
 import {
   createEvent,
   updateEvent,
@@ -6,29 +10,67 @@ import {
   listEvents,
   getEventDetails
 } from '../controllers/event.controller';
-import { authenticateJWT, authorizeRole } from '../middleware/auth.middleware';
-import multer from 'multer';
-import { Request } from 'express';
 
+import { authenticateJWT, authorizeRole } from '../middleware/auth.middleware';
+
+/**
+ * Absolute uploads directory (PROJECT ROOT /uploads)
+ */
+const uploadDir = path.join(process.cwd(), 'uploads');
+
+/**
+ * Ensure uploads directory exists
+ */
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+/**
+ * Multer storage configuration
+ */
 const storage = multer.diskStorage({
-  destination: function (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) {
-    cb(null, 'uploads/');
+  destination: function (_req: Request, _file, cb) {
+    cb(null, uploadDir);
   },
-  filename: function (_req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) {
+  filename: function (_req: Request, file, cb) {
     const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, unique + '-' + file.originalname.replace(/\s+/g, '_'));
+    const safeName = file.originalname.replace(/\s+/g, '_');
+    cb(null, `${unique}-${safeName}`);
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 const router = express.Router();
 
-// Event routes
-router.post('/', authenticateJWT, authorizeRole('ORGANIZER','ADMIN'), upload.single('image'), createEvent);           // Create Event (organizer/admin only)
-router.get('/', listEvents);             // List Events (with filters)
-router.get('/:id', getEventDetails);     // Get Event Details
-router.put('/:id', authenticateJWT, authorizeRole('ORGANIZER','ADMIN'), upload.single('image'), updateEvent);         // Update Event (organizer/admin only)
-router.delete('/:id', authenticateJWT, authorizeRole('ORGANIZER','ADMIN'), cancelEvent);      // Cancel Event (organizer/admin only)
+/**
+ * Event routes
+ */
+router.post(
+  '/',
+  authenticateJWT,
+  authorizeRole('ORGANIZER', 'ADMIN'),
+  upload.single('image'),
+  createEvent
+);
+
+router.get('/', listEvents);
+
+router.get('/:id', getEventDetails);
+
+router.put(
+  '/:id',
+  authenticateJWT,
+  authorizeRole('ORGANIZER', 'ADMIN'),
+  upload.single('image'),
+  updateEvent
+);
+
+router.delete(
+  '/:id',
+  authenticateJWT,
+  authorizeRole('ORGANIZER', 'ADMIN'),
+  cancelEvent
+);
 
 export default router;

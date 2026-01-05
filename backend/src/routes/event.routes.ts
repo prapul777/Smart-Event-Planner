@@ -13,21 +13,12 @@ import {
 
 import { authenticateJWT, authorizeRole } from '../middleware/auth.middleware';
 
-/**
- * Absolute uploads directory (PROJECT ROOT /uploads)
- */
 const uploadDir = path.join(process.cwd(), 'uploads');
 
-/**
- * Ensure uploads directory exists
- */
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-/**
- * Multer storage configuration
- */
 const storage = multer.diskStorage({
   destination: function (_req: Request, _file, cb) {
     cb(null, uploadDir);
@@ -43,9 +34,6 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-/**
- * Event routes
- */
 router.post(
   '/',
   authenticateJWT,

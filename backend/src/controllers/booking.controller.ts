@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
 import pool from '../config/db';
 
-// Book Tickets
 export const bookTickets = async (req: Request, res: Response): Promise<void> => {
   try {
     const { event_id, attendee_id, tickets_booked, total_price } = req.body;
 
-    // Validation
     if (!event_id || !attendee_id || !tickets_booked || total_price === undefined) {
       res.status(400).json({ error: 'All required fields must be provided' });
       return;
@@ -17,7 +15,6 @@ export const bookTickets = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Get event details and available seats
     const [events] = await pool.execute(
       `SELECT 
         e.*,
@@ -40,7 +37,6 @@ export const bookTickets = async (req: Request, res: Response): Promise<void> =>
     const event = eventArray[0];
     const availableSeats = parseInt(event.available_seats);
 
-    // Check capacity
     if (tickets_booked > availableSeats) {
       res.status(400).json({ 
         error: `Not enough seats available. Available: ${availableSeats}, Requested: ${tickets_booked}` 
@@ -48,7 +44,6 @@ export const bookTickets = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Create booking
     const [result] = await pool.execute(
       'INSERT INTO bookings (event_id, attendee_id, tickets_booked, total_price) VALUES (?, ?, ?, ?)',
       [event_id, attendee_id, tickets_booked, total_price]

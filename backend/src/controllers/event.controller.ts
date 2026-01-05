@@ -2,15 +2,12 @@ import { Request, Response } from 'express';
 import pool from '../config/db';
 import path from 'path';
 
-// Create Event
 export const createEvent = async (req: Request, res: Response): Promise<void> => {
   try {
     const { organizer_id, name, description, venue, date_time, category, capacity } = req.body;
-    // if file uploaded (multer), available as req.file
     const file = (req as any).file;
     const imagePath = file ? path.join('uploads', file.filename) : null;
 
-    // Validation
     if (!organizer_id || !name || !venue || !date_time || !category || !capacity) {
       res.status(400).json({ error: 'All required fields must be provided' });
       return;
@@ -37,7 +34,6 @@ export const createEvent = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-// Update Event
 export const updateEvent = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -45,7 +41,6 @@ export const updateEvent = async (req: Request, res: Response): Promise<void> =>
     const file = (req as any).file;
     const imagePath = file ? path.join('uploads', file.filename) : undefined;
 
-    // Check if event exists
     const [events] = await pool.execute('SELECT * FROM events WHERE id = ?', [id]);
     const eventArray = events as any[];
 
@@ -54,13 +49,11 @@ export const updateEvent = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // Validation
     if (capacity !== undefined && capacity <= 0) {
       res.status(400).json({ error: 'Capacity must be greater than 0' });
       return;
     }
 
-    // Build update query dynamically
     const updates: string[] = [];
     const values: any[] = [];
 

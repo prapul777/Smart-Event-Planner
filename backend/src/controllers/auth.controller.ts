@@ -9,7 +9,6 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret';
 const SALT_ROUNDS = 10;
 
-// Register (optional helper endpoint)
 export const registerUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, password, role } = req.body;
@@ -19,7 +18,6 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       return;
     }
 
-    // Check if user exists
     const [rows] = await pool.execute('SELECT id FROM users WHERE email = ?', [email]);
     const existing = (rows as any[]);
     if (existing.length > 0) {
@@ -42,7 +40,6 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-// Login
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;

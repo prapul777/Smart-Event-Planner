@@ -49,6 +49,14 @@ A full-stack web application for creating events, browsing events, booking ticke
    - total_price
    - booking_time
 
+3. **users**
+   - id (PK)
+   - name
+   - email
+   - password
+   - role (ORGANIZER/ATTENDEE/ADMIN)
+   - created_at
+
 ## 🚀 Setup Instructions
 
 ### Prerequisites
@@ -155,9 +163,13 @@ smart-event-planner/
 │   │   ├── config/
 │   │   │   └── db.ts
 │   │   ├── controllers/
+│   │   │   ├── auth.controller.ts
 │   │   │   ├── event.controller.ts
 │   │   │   └── booking.controller.ts
+│   │   ├── middleware/
+│   │   │   └── auth.middleware.ts
 │   │   ├── routes/
+│   │   │   ├── auth.routes.ts
 │   │   │   ├── event.routes.ts
 │   │   │   └── booking.routes.ts
 │   │   ├── app.ts
@@ -172,6 +184,7 @@ smart-event-planner/
     ├── src/
     │   ├── app/
     │   │   ├── components/
+    │   │   │   ├── login/
     │   │   │   ├── event-list/
     │   │   │   ├── event-details/
     │   │   │   ├── ticket-booking/
@@ -179,6 +192,7 @@ smart-event-planner/
     │   │   │   ├── organizer-dashboard/
     │   │   │   └── not-authorized/
     │   │   ├── services/
+    │   │   │   ├── auth.service.ts
     │   │   │   ├── event.service.ts
     │   │   │   └── booking.service.ts
     │   │   ├── guards/
@@ -191,6 +205,10 @@ smart-event-planner/
 ```
 
 ## 🔌 API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - User registration
 
 ### Events
 - `POST /api/events` - Create event

@@ -224,6 +224,16 @@ smart-event-planner/
 
 ## 🎯 Usage
 
+### Default Login Credentials
+
+**Organizer Account:**
+- Email: `organizer@example.com`
+- Password: `123`
+
+**Attendee Account:**
+- Email: `attendee@example.com`  
+- Password: `123`
+
 ### Switching Roles
 
 1. Use the role selector in the navigation bar

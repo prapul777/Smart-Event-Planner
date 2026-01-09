@@ -52,7 +52,7 @@ export class EventDetailsComponent implements OnInit {
 
   getImageUrl(path: string | undefined | null): string {
     if (!path) return '';
-    return `http://localhost:5000/${path}`;
+    return `http://localhost:5001/${path}`;
   }
 
   isAttendee(): boolean {

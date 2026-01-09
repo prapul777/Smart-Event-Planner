@@ -3,8 +3,9 @@ import pool from '../config/db';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret';
 const SALT_ROUNDS = 10;
